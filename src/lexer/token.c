@@ -88,6 +88,25 @@ static Token token_end_ptr() {
 }
 
 static void assign_token_list_ptr(Token **token_list_ptr, Token assign_token, int *token_ptr_memory_count) {
+    //  もし前回のトークンが"-"なら1
+    static int minus_token = 0;
+
+    if (!strcmp(assign_token.token, "-")) {
+        minus_token = 1;
+    } else if (minus_token) {
+        minus_token = 0;
+
+        if (assign_token.type == TypeNumber) {
+            (*token_list_ptr)[*token_ptr_memory_count - 2].token = (char *)realloc(
+                    (*token_list_ptr)[*token_ptr_memory_count - 2].token,
+                    (int)strlen((*token_list_ptr)[*token_ptr_memory_count - 2].token) + 2);
+            strcat((*token_list_ptr)[*token_ptr_memory_count - 2].token, assign_token.token);
+            (*token_list_ptr)[*token_ptr_memory_count - 2].type = TypeNumber;
+            free(assign_token.token);
+            return;
+        }
+    }
+
     if (*token_ptr_memory_count > 1) {
         (*token_list_ptr) = (Token *)realloc(
                 (*token_list_ptr), 

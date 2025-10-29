@@ -30,7 +30,10 @@ static CalculNode *parse_factor(Token *token_list_ptr, int *pos) {
     if (token_list_ptr[*pos].type == TypeNumber) {
         return make_num_node(token_list_ptr[*pos].token, pos);
     } else if (token_list_ptr[*pos].type == TypeNormal) {
-        return get_var_value(token_list_ptr[*pos].token);
+        //
+        CalculNode *node = get_var_value(token_list_ptr[*pos].token);
+        (*pos)++;
+        return node;
     }
 
     if (token_list_ptr[*pos].type == TypeLparen) {

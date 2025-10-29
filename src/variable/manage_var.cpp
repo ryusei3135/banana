@@ -46,7 +46,7 @@ public:
 private:
     int search_variable(char *var_name) {
         for (int count = 0; this->variable_data_memorys - 2 >= count; count++) {
-            if (!strcmp(var_name, this->variable_datas[count].var_name)) {
+            if (!strcmp(this->variable_datas[count].var_name, var_name)) {
                 return count;
             }
         }
