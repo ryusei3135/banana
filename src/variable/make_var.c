@@ -2,41 +2,34 @@
 
 
 VariableNode* make_variable_node(Token *token_list_ptr, int *pos) {
-    VariableNode *node = (VariableNode *)malloc(sizeof(VariableNode));
-    int assigned_var_name = 0;
+    VariableNode *var_node = (VariableNode *)malloc(sizeof(VariableNode));
     int assigned_value = 0;
-    int bool_variable_data = 0;
+    int defined_var_name = 0;
 
     while (token_list_ptr[*pos].type != TypeEnd) {
-        if (token_list_ptr[*pos].type == TypeNormal) {
-            if (assigned_var_name) { //  err
-                break;
-            }
-            node->var_name = (char *)malloc((int)strlen(token_list_ptr[*pos].token));
-            strcpy(node->var_name, token_list_ptr[*pos].token);
-            assigned_var_name = 1;
-        }
-
-        if (assigned_var_name && token_list_ptr[*pos].type == TypeOpAssign) {
-            if (assigned_value) { //  err
-                break;
-            }
+        if (token_list_ptr[*pos].type == TypeOpAssign) {
             assigned_value = 1;
-        }
-
-        if (token_list_ptr[*pos].type == TypeSpace) {
+        } else if (token_list_ptr[*pos].type == TypeSpace) {
             (*pos)++;
             continue;
-        } else if (assigned_value) {
-            node->value = parse_expr(token_list_ptr, pos);
-            bool_variable_data = 1;
-            break;
+        } else {
+            if (token_list_ptr[*pos].type == TypeNormal) {
+                if (defined_var_name) {
+                    var_node->value = parse_expr(token_list_ptr, pos);
+                    break;
+                }
+                defined_var_name = 1;
+                var_node->var_name = (char *)malloc((int)strlen(token_list_ptr[*pos].token));
+                strcpy(var_node->var_name, token_list_ptr[*pos].token);
+            } else if (defined_var_name) {
+                var_node->value = parse_expr(token_list_ptr, pos);
+                break;
+            }
         }
+
+        (*pos)++;
     }
 
-    if (bool_variable_data) {
-        return node;
-    } else { //  err
-        return NULL;
-    }
+    add_variable(var_node);
+    return var_node;
 }

@@ -9,6 +9,7 @@
 #include "stdlib.h"
 
 #include "lexer/token.h"
+#include "variable/variable.h"
 #include "parse/parse.h"
 
 

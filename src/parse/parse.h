@@ -24,6 +24,7 @@ typedef struct CalculNode {
 
 CalculNode *parse_expr(Token *token_list_ptr, int *pos);
 int calcul_eval(CalculNode* n);
+void free_all_calcul_node(CalculNode *n);
 
 
 void make_process_data(Token *token_list_ptr);

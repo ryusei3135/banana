@@ -30,10 +30,7 @@ static CalculNode *parse_factor(Token *token_list_ptr, int *pos) {
     if (token_list_ptr[*pos].type == TypeNumber) {
         return make_num_node(token_list_ptr[*pos].token, pos);
     } else if (token_list_ptr[*pos].type == TypeNormal) {
-        // //  変数を参照
-        // char *text = (char *)malloc(200);
-        // sprintf(text, "%d", get_var_value(token_list_ptr[*pos].buffer));
-        // return make_num_node(text, pos);
+        return get_var_value(token_list_ptr[*pos].token);
     }
 
     if (token_list_ptr[*pos].type == TypeLparen) {
@@ -110,12 +107,15 @@ int calcul_eval(CalculNode* n) {
     return 0;
 }
 
-// void free_all_calcul_node(CalculNode *n) {
-//     switch (n->type) {
-//         case Num: return free(n->type);
-//         case Add: return calcul_eval(n->left) + calcul_eval(n->right);
-//         case Sub: return calcul_eval(n->left) - calcul_eval(n->right);
-//         case Mul: return calcul_eval(n->left) * calcul_eval(n->right);
-//         case Div: return calcul_eval(n->left) / calcul_eval(n->right);
-//     }
-// }
+void free_all_calcul_node(CalculNode *n) {
+    if (n->value) {
+        free(n->value);
+    }
+    if (n->left) {
+        free_all_calcul_node(n->left);
+        free(n->left);
+    } else if (n->right) {
+        free_all_calcul_node(n->right);
+        free(n->right);
+    }
+}
