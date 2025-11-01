@@ -58,16 +58,35 @@ static CalculNode *parse_factor(Token *token_list_ptr, int *pos) {
     exit(1);
 }
 
-static CalculNode *parse_term(Token *token_list_ptr, int *pos) {
+static CalculNode *parse_operator(Token *token_list_ptr, int *pos) {
     CalculNode *node = parse_factor(token_list_ptr, pos);
+
+    while (token_list_ptr[*pos].type != TypeEnd) {
+        OpType type = soring_operator_token_type(token_list_ptr[*pos].token);
+
+        if (type != -1) {
+            (*pos)++;
+            node = make_op_node(type, node, parse_factor(token_list_ptr, pos));
+        } else if (token_list_ptr[*pos].type == TypeSpace) {
+            (*pos)++;
+        } else {
+            break;
+        }
+    }
+
+    return node;
+}
+
+static CalculNode *parse_term(Token *token_list_ptr, int *pos) {
+    CalculNode *node = parse_operator(token_list_ptr, pos);
 
     while (token_list_ptr[*pos].type != TypeEnd) {
         if (token_list_ptr[*pos].type == TypeOpMul) {
             (*pos)++;
-            node = make_op_node(Mul, node, parse_factor(token_list_ptr, pos));
+            node = make_op_node(Mul, node, parse_operator(token_list_ptr, pos));
         } else if (token_list_ptr[*pos].type == TypeOpDiv) {
             (*pos)++;
-            node = make_op_node(Div, node, parse_factor(token_list_ptr, pos));
+            node = make_op_node(Div, node, parse_operator(token_list_ptr, pos));
         } else if (token_list_ptr[*pos].type == TypeSpace) {
             (*pos)++;
         } else {
@@ -106,6 +125,14 @@ int calcul_eval(CalculNode* n) {
         case Sub: return calcul_eval(n->left) - calcul_eval(n->right);
         case Mul: return calcul_eval(n->left) * calcul_eval(n->right);
         case Div: return calcul_eval(n->left) / calcul_eval(n->right);
+        case TypeOpEpual: return calcul_eval(n->left) == calcul_eval(n->right);
+        case TypeOpBigger: return calcul_eval(n->left) > calcul_eval(n->right);
+        case TypeOpSmallerThen: return calcul_eval(n->left) < calcul_eval(n->right);
+        case TypeOpHigher: return calcul_eval(n->left) >= calcul_eval(n->right);
+        case TypeOpBelow: return calcul_eval(n->left) <= calcul_eval(n->right);
+        case TypeOpIsNot: return calcul_eval(n->left) != calcul_eval(n->right);
+        case TypeOpAnd: return calcul_eval(n->left) && calcul_eval(n->right);
+        case TypeOpOr: return calcul_eval(n->left) ||  calcul_eval(n->right);
     }
     return 0;
 }

@@ -1,22 +1,6 @@
 #include "token.h"
 
 
-static TokenType change_op_symbol(char *value) {
-    if (!strcmp(value, "+")) {
-        return TypeOpAdd;
-    } else if (!strcmp(value, "-")) {
-        return TypeOpSub;
-    } else if (!strcmp(value, "*")) {
-        return TypeOpMul;
-    } else if (!strcmp(value, "/")) {
-        return TypeOpDiv;
-    } else if (!strcmp(value, "=")) {
-        return TypeOpAssign;
-    }
-
-    return TypeSymbol;
-}
-
 static int _is_normal(char chr) {
     if (isalpha(chr) || chr == '_') {
         return 1;
@@ -113,6 +97,11 @@ static void assign_token_list_ptr(Token **token_list_ptr, Token assign_token, in
                 sizeof(Token) 
                     * (*token_ptr_memory_count));
     }
+
+    if (assign_token.type == TypeNormal) {
+        assign_token.type = sorting_normal_token(assign_token.token);
+    }
+    
     (*token_list_ptr)[*token_ptr_memory_count - 1] = assign_token;
     (*token_ptr_memory_count)++;
 }

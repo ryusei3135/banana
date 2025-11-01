@@ -8,7 +8,7 @@ typedef enum {
     TypeSpace,
     TypeSymbol,
     TypeEnd,
-
+    //  ===  算術演算子 ===
     TypeOpAdd,
     TypeOpSub,
     TypeOpMul,
@@ -18,6 +18,8 @@ typedef enum {
 
     TypeRparen,
     TypeLparen,
+
+    TypeFuncSym,
 } TokenType;
 
 typedef struct {
@@ -27,6 +29,12 @@ typedef struct {
 
 
 #include "../banana.h"
+
+
+TokenType change_op_symbol(char *value);
+
+
+TokenType sorting_normal_token(char *token_text);
 
 
 void free_all_token_ptr(Token *token_list_ptr);
